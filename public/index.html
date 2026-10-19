@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f7fb">
+<title>Receipt Wi-Fi | 관리자</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div><p class="eyebrow">RECEIPT WI-FI / MVP</p><h1>매장 Wi-Fi 인증 관리</h1><p class="muted">영수증 QR 발급 · 토큰 검증 · 이용시간 관리</p></div>
+    <span class="pill warn">공유기 미연동</span>
+  </header>
+  <section id="loginPanel" class="panel narrow">
+    <div class="brand-mark">W</div><h2>관리자 로그인</h2><p class="muted">테스트용 관리자 비밀번호를 입력하세요.</p>
+    <form id="loginForm"><label for="password">관리자 비밀번호</label><input id="password" type="password" autocomplete="current-password" required minlength="16" placeholder="설정한 관리자 비밀번호"><button class="primary" type="submit">로그인</button><p id="loginError" class="error" role="alert"></p></form>
+  </section>
+  <section id="appPanel" hidden>
+    <div class="notice"><strong>테스트 모드 — 실제 인터넷 접속은 제어하지 않습니다.</strong><p>현재 버전은 QR 발급, 일회성 토큰 검증, 이용시간 상태를 확인합니다. 고객이 QR을 인증해도 실제 인터넷 권한은 바뀌지 않습니다. 공유기/게이트웨이 연동은 장비 호환성을 확인한 뒤 구현해야 합니다.</p></div>
+    <div class="grid">
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">NEW ACCESS PASS</p><h2>새 QR 발급</h2></div><span class="step">01</span></div>
+        <form id="createForm">
+          <label for="storeName">매장명</label><input id="storeName" maxlength="80" placeholder="예: 테스트 카페" required>
+          <label for="duration">고객 이용 시간</label><select id="duration"><option value="15">15분</option><option value="30" selected>30분</option><option value="60">1시간</option><option value="120">2시간</option><option value="240">4시간</option><option value="720">12시간</option></select>
+          <button class="primary" type="submit">QR 발급하기 <span aria-hidden="true">↗</span></button><p id="createError" class="error" role="alert"></p>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">SYSTEM STATUS</p><h2>연동 상태</h2></div><button id="logoutBtn" class="secondary" type="button">로그아웃</button></div>
+        <div class="status-row"><span class="dot"></span><div><strong>공유기 / 게이트웨이</strong><p>연결되지 않음 · 접속 권한 제어 불가</p></div></div>
+        <div class="status-row"><span class="dot good"></span><div><strong>QR 토큰 검증</strong><p>사용·취소·만료 상태 테스트 가능</p></div></div>
+        <div class="status-row"><span class="dot"></span><div><strong>실제 접속 차단·만료</strong><p>미구현 · 호환 장비 연동 필요</p></div></div>
+        <div class="status-foot"><span class="pulse"></span>인증 엔진 준비됨 <span class="muted">/ 네트워크 제어 대기</span></div>
+      </section>
+    </div>
+    <section id="newTokenPanel" class="panel result-panel" hidden>
+      <div class="section-head"><div><p class="eyebrow">ISSUED PASS</p><h2>QR 발급 완료</h2></div><span id="newTokenState" class="pill">미사용</span></div>
+      <div class="qr-layout"><div class="qr-frame"><img id="newQr" alt="발급된 QR 코드"></div><div class="qr-info"><h3 id="newStore"></h3><p id="newDetails" class="muted"></p><a id="openClaim" class="link" target="_blank" rel="noopener">고객 화면 열기 ↗</a><button id="copyLink" class="secondary" type="button">고객 링크 복사</button><p id="copyStatus" class="muted" role="status"></p><p class="tiny-note">테스트용 QR입니다. 실제 인터넷 접속 권한은 부여하지 않습니다.</p></div></div>
+    </section>
+    <section class="panel">
+      <div class="section-head"><div><p class="eyebrow">ACTIVITY</p><h2>발급 기록</h2></div><button id="refreshBtn" class="secondary" type="button">↻ 새로고침</button></div>
+      <div id="empty" class="empty"><span class="empty-icon">⌁</span><strong>아직 발급한 QR이 없습니다.</strong><p>위에서 첫 번째 테스트 QR을 발급하세요.</p></div>
+      <div class="table-wrap"><table id="tokensTable" hidden><thead><tr><th>매장</th><th>이용 시간</th><th>상태</th><th>발급 시각</th><th>작업</th></tr></thead><tbody id="tokensBody"></tbody></table></div>
+    </section>
+  </section>
+  <footer><span>RECEIPT WI-FI</span><span>초기 검증용 · 실제 매장 운영 전 보안 및 네트워크 검증 필요</span></footer>
+</main>
+<script src="/admin.js" defer></script>
+</body></html>
