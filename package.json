@@ -1,0 +1,19 @@
+{
+  "name": "receipt-wifi-auth-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Receipt QR Wi-Fi authentication prototype; router enforcement intentionally disabled until hardware is verified.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.1",
+    "helmet": "^8.1.0",
+    "qrcode": "^1.5.4"
+  }
+}
