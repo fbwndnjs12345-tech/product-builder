@@ -30,6 +30,10 @@ This establishes a firmware-specific, browser-form configuration flow. It does *
 
 No form was submitted and no router settings were changed during this investigation.
 
+## Application safety fix
+
+The claim endpoint now returns `503 NETWORK_ENFORCEMENT_NOT_CONNECTED` before changing `usedAt` or `activeUntil`. A valid receipt QR is therefore not consumed when the gateway is disconnected, and the UI shows the reason. This prevents a QR scan from looking like a completed session when no Internet permission was granted.
+
 ## Decision for the receipt-QR project
 
 Do not implement a live GAPD-7300 adapter based only on these observations. The UI is local-network-only and firmware-specific, and its hour-level schedule does not meet minute-accurate session expiry. Automating its private form could lock out devices or create an unintended allow/block policy.
