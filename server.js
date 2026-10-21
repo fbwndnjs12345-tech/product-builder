@@ -13,8 +13,14 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
 const NETWORK_MODE = process.env.NETWORK_MODE || 'simulation';
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'tokens.json');
+
+// Never let an unsupported mode appear to run as if it controls real client traffic.
+if (NETWORK_MODE !== 'simulation') {
+  console.error('Network enforcement is not implemented for this gateway. Keep NETWORK_MODE=simulation; real mode is intentionally blocked until a verified adapter is integrated and tested.');
+  process.exit(1);
+}
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 16 || !COOKIE_SECRET || COOKIE_SECRET.length < 32) {
   console.error('Configuration error: set ADMIN_PASSWORD (16+ chars) and COOKIE_SECRET (32+ chars). Copy .env.example to .env and set values.');
@@ -181,17 +187,21 @@ app.post('/api/claim/:token', (req, res) => {
   if (state === 'revoked' || state === 'expired') return res.status(410).json({ error: '만료되었거나 취소된 QR입니다.' });
   if (state === 'active') return res.status(409).json({ error: '이미 사용 중인 QR입니다.' });
   if (state !== 'unused') return res.status(410).json({ error: '사용할 수 없는 QR입니다.' });
-  const now = Date.now();
-  t.usedAt = now;
-  t.activeUntil = now + t.durationMinutes * 60_000;
-  writeTokens(tokens);
-  res.json({
-    ok: true, storeName: t.storeName, activeUntil: t.activeUntil, enforcement: 'NOT_CONNECTED',
-    message: 'QR 토큰 검증은 완료됐습니다. 실제 와이파이 인터넷 권한은 공유기 연동 전이므로 부여되지 않았습니다.'
+  // Never consume a receipt QR until a verified gateway can actually grant access.
+  // This build has no GAPD-7300 enforcement adapter, so preserve the token for a later real test.
+  return res.status(503).json({
+    ok: false,
+    code: 'NETWORK_ENFORCEMENT_NOT_CONNECTED',
+    enforcement: 'NOT_CONNECTED',
+    error: 'QR은 유효하지만 실제 공유기 접속 허용 기능이 아직 연결되지 않았습니다. QR은 사용 처리되지 않았으므로 나중에 다시 테스트할 수 있습니다.'
   });
 });
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
 });
-app.listen(PORT, '0.0.0.0', () => console.log(`Receipt Wi-Fi MVP listening on port ${PORT} (network enforcement: NOT_CONNECTED)`));
+
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => console.log(`Receipt Wi-Fi MVP listening on port ${PORT} (network enforcement: NOT_CONNECTED)`));
+}
+module.exports = { app };

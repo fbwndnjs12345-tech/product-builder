@@ -18,7 +18,7 @@ async function load() {
     $('storeName').textContent = 'QR 인증 불가';
     $('duration').textContent = err.message;
     button.disabled = true;
-    $('claimResult').textContent = '만료·취소되었거나 유효하지 않은 QR입니다.';
+    $('claimResult').textContent = err.message || '만료·취소되었거나 유효하지 않은 QR입니다.';
     $('claimResult').className = 'warn-text';
   }
 }
