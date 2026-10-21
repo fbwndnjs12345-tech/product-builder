@@ -13,14 +13,14 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
 const NETWORK_MODE = process.env.NETWORK_MODE || 'simulation';
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'tokens.json');
 
 // Never let an unsupported mode appear to run as if it controls real client traffic.
 if (NETWORK_MODE !== 'simulation') {
   console.error('Network enforcement is not implemented for this gateway. Keep NETWORK_MODE=simulation; real mode is intentionally blocked until a verified adapter is integrated and tested.');
   process.exit(1);
 }
-const DATA_DIR = path.join(__dirname, 'data');
-const DATA_FILE = path.join(DATA_DIR, 'tokens.json');
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 16 || !COOKIE_SECRET || COOKIE_SECRET.length < 32) {
   console.error('Configuration error: set ADMIN_PASSWORD (16+ chars) and COOKIE_SECRET (32+ chars). Copy .env.example to .env and set values.');
@@ -200,4 +200,8 @@ app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: '서버 내부 오류가 발생했습니다.' });
 });
-app.listen(PORT, '0.0.0.0', () => console.log(`Receipt Wi-Fi MVP listening on port ${PORT} (network enforcement: NOT_CONNECTED)`));
+
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => console.log(`Receipt Wi-Fi MVP listening on port ${PORT} (network enforcement: NOT_CONNECTED)`));
+}
+module.exports = { app };
