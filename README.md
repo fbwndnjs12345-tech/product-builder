@@ -29,3 +29,5 @@
 ## 실제 네트워크 연동 계획
 
 현재 앱은 실제 인터넷을 허용하거나 차단하지 않습니다. OpenWrt/openNDS 게이트웨이 연동 구조, 보안 요구사항, 검증 절차는 [`docs/REAL_NETWORK_INTEGRATION.md`](docs/REAL_NETWORK_INTEGRATION.md)를 참고하세요. 이 문서는 연동 완료를 의미하지 않으며, LG U+ GAPD-7300 호환성은 아직 확인되지 않았습니다.
+
+추가 구매 없이 가능한 확인 절차는 [`docs/NO_PURCHASE_TEST_PLAN.md`](docs/NO_PURCHASE_TEST_PLAN.md)에 정리했습니다. GAPD-7300 설정은 변경하지 않는 방향입니다.
