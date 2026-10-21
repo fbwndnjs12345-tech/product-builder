@@ -13,6 +13,12 @@ const PORT = Number(process.env.PORT || 3000);
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const COOKIE_SECRET = process.env.COOKIE_SECRET;
 const NETWORK_MODE = process.env.NETWORK_MODE || 'simulation';
+
+// Never let an unsupported mode appear to run as if it controls real client traffic.
+if (NETWORK_MODE !== 'simulation') {
+  console.error('Network enforcement is not implemented for this gateway. Keep NETWORK_MODE=simulation; real mode is intentionally blocked until a verified adapter is integrated and tested.');
+  process.exit(1);
+}
 const DATA_DIR = path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'tokens.json');
 
