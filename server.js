@@ -187,13 +187,13 @@ app.post('/api/claim/:token', (req, res) => {
   if (state === 'revoked' || state === 'expired') return res.status(410).json({ error: '만료되었거나 취소된 QR입니다.' });
   if (state === 'active') return res.status(409).json({ error: '이미 사용 중인 QR입니다.' });
   if (state !== 'unused') return res.status(410).json({ error: '사용할 수 없는 QR입니다.' });
-  const now = Date.now();
-  t.usedAt = now;
-  t.activeUntil = now + t.durationMinutes * 60_000;
-  writeTokens(tokens);
-  res.json({
-    ok: true, storeName: t.storeName, activeUntil: t.activeUntil, enforcement: 'NOT_CONNECTED',
-    message: 'QR 토큰 검증은 완료됐습니다. 실제 와이파이 인터넷 권한은 공유기 연동 전이므로 부여되지 않았습니다.'
+  // Never consume a receipt QR until a verified gateway can actually grant access.
+  // This build has no GAPD-7300 enforcement adapter, so preserve the token for a later real test.
+  return res.status(503).json({
+    ok: false,
+    code: 'NETWORK_ENFORCEMENT_NOT_CONNECTED',
+    enforcement: 'NOT_CONNECTED',
+    error: 'QR은 유효하지만 실제 공유기 접속 허용 기능이 아직 연결되지 않았습니다. QR은 사용 처리되지 않았으므로 나중에 다시 테스트할 수 있습니다.'
   });
 });
 app.use((err, _req, res, _next) => {
