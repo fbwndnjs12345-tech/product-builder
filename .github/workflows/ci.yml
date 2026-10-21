@@ -22,6 +22,7 @@ jobs:
         run: |
           node --check public/admin.js
           node --check public/claim.js
+          node --check tools/gapd-readonly-inspector.js
       - name: Check network enforcement module and tests
         run: |
           node --check lib/network-enforcement.js
